@@ -24,8 +24,81 @@
 </head>
 
 <body>
-  <h3>City</h3>
-  <h1>Temp</h1>
+  <section id='search-section'>
+    <input id='search'></input>
+  </section>
+  <section id='today-section'>
+    <div id='current-weather'>
+      <div id='cw-emoji'>
+        <p style='font-size: 4em;'>⛅</p>
+      </div>
+      <div id='cw-info'>
+        <h1 id='cwi-temp'>Temp</h1>
+        <h3 id='cwi-condition'>Condition</h3>
+        <h3 id='cwi-feels-like'>Feels Like</h3>
+      </div>
+    </div>
+    <div id='hourly-forecast'>
+      <div class='hf-hour'>
+        <div class='hf-emoji'>☀️</div>
+        <h4 class='hf-temp'>59°</h4>
+        <h5 class='hf-time'>1PM</h5>
+      </div>
+      <div class='hf-hour'>
+        <div class='hf-emoji'>☀️</div>
+        <h4 class='hf-temp'>63°</h4>
+        <h5 class='hf-time'>2PM</h5>
+      </div>
+      <div class='hf-hour'>
+        <div class='hf-emoji'>☁️</div>
+        <h4 class='hf-temp'>58°</h4>
+        <h5 class='hf-time'>3PM</h5>
+      </div>
+      <div class='hf-hour'>
+        <div class='hf-emoji'>☁️</div>
+        <h4 class='hf-temp'>55°</h4>
+        <h5 class='hf-time'>4PM</h5>
+      </div>
+      <div class='hf-hour'>
+        <div class='hf-emoji'>🌧️</div>
+        <h4 class='hf-temp'>51°</h4>
+        <h5 class='hf-time'>5PM</h5>
+      </div>
+      <div class='hf-hour'>
+        <div class='hf-emoji'>🌩️</div>
+        <h4 class='hf-temp'>52°</h4>
+        <h5 class='hf-time'>6PM</h5>
+      </div>
+    </div>
+  </section>
+  <section id='info-section'>
+    <div id='info'>
+      <div class='info-unit'>
+        <h4 class='info-data'>42%</h4>
+        <h5 class='info-label'>Humidity</h5>
+      </div>
+      <div class='info-unit'>
+        <h4 class='info-data'>30.00 in</h4>
+        <h5 class='info-label'>Pressure</h5>
+      </div>
+      <div class='info-unit'>
+        <h4 class='info-data'>10 mi</h4>
+        <h5 class='info-label'>Visibility</h5>
+      </div>
+      <div class='info-unit'>
+        <h4 class='info-data'>11 mph</h4>
+        <h5 class='info-label'>Wind</h5>
+      </div>
+    </div>
+  </section>
+  <section id='daily-section'>
+    <div class='df-day'></div>
+    <div class='df-day'></div>
+    <div class='df-day'></div>
+    <div class='df-day'></div>
+    <div class='df-day'></div>
+    <div class='df-day'></div>
+  </section>
   <script type='text/javascript' src='../config.js'></script>
   <script src="./bundle.js"></script>
 </body>

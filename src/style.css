@@ -1,19 +1,97 @@
 html {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
-  margin: 1em;
+  /* margin: 1em; */
 }
 h1 {
-  font-size: 3rem;
+  font-size: 2.7rem;
   font-weight: 700;
 }
 h2 {
   font-size: 2.2rem;
 }
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 h4 {
   font-size: 1.2rem;
   font-weight: 700;
+}
+h5 {
+  font-size: 1.0rem;
+}
+section {
+  width: 100vw;
+}
+#search-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #EEE;
+}
+#today-section {
+  width: 70vw;
+  margin: 6rem auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+#current-weather {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+#hourly-forecast {
+
+}
+#info-section {
+  background-color: #EEE;
+}
+#info {
+  width: 50vw;
+  padding: 4rem 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.info-unit {
+  text-align: center;
+}
+.info-data {
+  font-size: 1.4rem;
+  margin-bottom: 0.2rem;
+}
+.info-label {
+  font-size: 1rem;
+}
+#daily-section {
+  
+}
+#search {
+  margin: 2rem 0;
+}
+#cw-emoji {
+  margin-right: 1rem;
+}
+.hf-hour {
+  display: inline-block;
+  text-align: center;
+  width: 5rem;
+}
+.hf-emoji {
+  font-size: 1.6rem;
+  margin-bottom: 0.3rem;
+}
+.hf-temp {
+  font-size: 2rem;
+  font-weight: normal;
+  margin-bottom: 0.2rem;
+}
+.hf-time {
+  font-size: 0.9rem;
+  letter-spacing: 0.03rem;
 }
