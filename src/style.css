@@ -29,13 +29,20 @@ section {
   align-items: center;
   background-color: #EEE;
 }
+#today-section-container {
+  background-image: linear-gradient(110deg, rgb(19, 92, 226), rgb(0, 171, 201));
+  color: white; 
+}
 #today-section {
   width: 70vw;
-  margin: 6rem auto;
+  margin: 0 auto;
+  height: 50vw;
+  /* padding: 10rem 0; */
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
 }
 #current-weather {
   display: flex;

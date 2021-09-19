@@ -1,20 +1,89 @@
 import './meyerreset.css';
 import './style.css';
-let token = config.MY_API_TOKEN;
 
-function convertInput(input) {
+const cityList = require('../new.city.list.min.json');
+const token = config.MY_API_TOKEN;
 
-}
+const input = (() => {
 
-async function getWeather(city) {
+  const convertInput = (text) => {
+    const textArray = getTextArray(text);
+
+    if (textArray.length == 1) {
+      return textArray[0];
+    }
+    else if (textArray.length == 2) {
+      // Convert second argument to US if it's a form of United States
+      if (isUnitedStates(textArray[1])) {
+        textArray[1] = 'US';
+      }
+      if (getPairFromInput(STATES, textArray[1])) {
+        // State matches, search in US
+        return `${textArray[0]},${getPairFromInput(STATES,textArray[1])[0]},US`;
+      } else if (getPairFromInput(COUNTRIES, textArray[1])) {
+        return `${textArray[0]},${getPairFromInput(COUNTRIES, textArray[1])[0]}`;
+      } else {
+        // 2nd term isn't recognized as state or country
+        throw "Can't recognize second argument, try again";
+      }
+    }
+    else if (textArray.length == 3) {
+      if (getPairFromInput(COUNTRIES, textArray[2])) {
+        if (isUnitedStates(textArray[2])) {
+          if (getPairFromInput(STATES, textArray[1])) {
+            // Country is US and state matches, search normally
+            return `${textArray[0]},${getPairFromInput(STATES, textArray[1])[0]},US`;
+          } else {
+            // Country is US but state doesn't match
+            throw "Can't recognize second argument, try again";
+          }
+        } else {
+          // Country matches but isn't the US. Just search city and country
+          return `${textArray[0]},${getPairFromInput(COUNTRIES, textArray[2])[0]}`;
+        }
+      } else {
+        // Country isn't recognized
+        throw "Can't recognize second argument, try again";
+      }
+    }
+    else {
+      throw "Please shorten query to 3 arguments or less";
+    }
+  };
+
+  // Converts the user text to an array of its comma-separated phrases
+  const getTextArray = (text) => {
+    return text.match(/(?<=(^|,|, *))\w[\w\s-]+/g);
+  };
+
+  // If text is a key or value in object, returns pair as an array
+  const getPairFromInput = (object, text) => {
+    const foundKey = Object.keys(object).find(key => key === text || object[key] === text);
+    if (foundKey) {
+      return [foundKey, object[foundKey]];
+    }
+    return null;
+  };
+
+  const isUnitedStates = (text) => {
+    const usNames = ['US', 'USA', 'United States', 'United States of America'];
+    return usNames.includes(text);
+  }
+
+  return {
+    convertInput,
+    getPairFromInput,
+  }
+})();
+
+async function getWeather(text) {
   const temp = document.querySelector('#cwi-temp');
   const condition = document.querySelector('#cwi-condition');
   const feels_like = document.querySelector('#cwi-feels-like');
   temp.innerText = 'Loading Temp';
   condition.innerText = 'Loading Condition';
   feels_like.innerText = 'Loading Feels Like';
-  // const data = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${token}`);
-  const data = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=Chicago,IL,US&units=imperial&appid=${token}`);
+  const data = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${text}&units=imperial&appid=${token}`);
   const json = await data.json();
   temp.innerText = Math.round(json.main.temp) + '°F';
   condition.innerText = json.weather[0].main;
@@ -22,5 +91,20 @@ async function getWeather(city) {
   console.log(json);
 }
 
-getWeather();
-// getWeather(prompt('Get weather for what city?'));
+function getStateFromCityId(id) {
+  const found = cityList.find(city => city.i == id);
+  if (found) {
+    return found.s;
+  }
+  return null;
+}
+
+// getWeather('London');
+
+try {
+  const converted = input.convertInput('London, United Kingdom')
+  console.log(`Getting weather for ${converted}`)
+  getWeather(converted);
+} catch (error) {
+  console.error(error);
+}
