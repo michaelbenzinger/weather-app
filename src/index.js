@@ -73,38 +73,70 @@ const input = (() => {
   return {
     convertInput,
     getPairFromInput,
-  }
+  };
 })();
 
-async function getWeather(text) {
-  const temp = document.querySelector('#cwi-temp');
-  const condition = document.querySelector('#cwi-condition');
-  const feels_like = document.querySelector('#cwi-feels-like');
-  temp.innerText = 'Loading Temp';
-  condition.innerText = 'Loading Condition';
-  feels_like.innerText = 'Loading Feels Like';
-  const data = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${text}&units=imperial&appid=${token}`);
-  const json = await data.json();
-  temp.innerText = Math.round(json.main.temp) + '°F';
-  condition.innerText = json.weather[0].main;
-  feels_like.innerText = 'Feels like ' + Math.round(json.main.feels_like) + '°F';
-  console.log(json);
-}
+const display = (() => {
 
-function getStateFromCityId(id) {
-  const found = cityList.find(city => city.i == id);
-  if (found) {
-    return found.s;
+  return {
+
+  };
+})();
+
+const api = (() => {
+  const getDataFromInput = async (text) => {
+    try {
+      const converted = input.convertInput(text);
+
+      const currentWeather = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${converted}&units=imperial&appid=${token}`);
+      const currentWeatherJson = await currentWeather.json();
+  
+      if (currentWeatherJson.cod == '404') {
+        throw `Couldn't get weather data for ${converted}`;
+      }
+
+      const lat = currentWeatherJson.coord.lat;
+      const lon = currentWeatherJson.coord.lon;
+      const oneCall = await fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely&units=imperial&appid=${token}`);
+      const oneCallJson = await oneCall.json();
+  
+      const state = getStateFromCityId(currentWeatherJson.id);
+  
+      return [currentWeatherJson, oneCallJson, state];
+    }
+    catch (error) {
+      console.error(error);
+    }
   }
-  return null;
-}
 
-// getWeather('London');
+  const getStateFromCityId = (id) => {
+    const found = cityList.find(city => city.i == id);
+    if (found) {
+      return found.s;
+    }
+    return null;
+  }
 
-try {
-  const converted = input.convertInput('London, United Kingdom')
-  console.log(`Getting weather for ${converted}`)
-  getWeather(converted);
-} catch (error) {
-  console.error(error);
-}
+  return {
+    getDataFromInput,
+  };
+})();
+
+// async function getWeather(text) {
+//   const temp = document.querySelector('#cwi-temp');
+//   const condition = document.querySelector('#cwi-condition');
+//   const feels_like = document.querySelector('#cwi-feels-like');
+//   temp.innerText = 'Loading Temp';
+//   condition.innerText = 'Loading Condition';
+//   feels_like.innerText = 'Loading Feels Like';
+//   const data = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${text}&units=imperial&appid=${token}`);
+//   const json = await data.json();
+//   temp.innerText = Math.round(json.main.temp) + '°F';
+//   condition.innerText = json.weather[0].main;
+//   feels_like.innerText = 'Feels like ' + Math.round(json.main.feels_like) + '°F';
+//   console.log(json);
+// }
+
+api.getDataFromInput('Spring').then(data => {
+  console.log(data);
+});
