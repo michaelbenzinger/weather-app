@@ -77,9 +77,111 @@ const input = (() => {
 })();
 
 const display = (() => {
+  const hourlyForecast = document.querySelector('#hourly-forecast');
+
+  const initialize = () => {
+    // Initialize hourly forecast
+    for (let i = 0; i < 24; i++) {
+      const hour = document.createElement('div');
+      hour.dataset.hourIndex = i;
+      hour.classList.add('hf-hour');
+      const hourImage = document.createElement('div');
+      hourImage.classList.add('hf-img');
+      hourImage.innerText = '☀️';
+      hour.append(hourImage);
+      const hourTemp = document.createElement('h4');
+      hourTemp.classList.add('hf-temp');
+      hourTemp.innerText = '50°';
+      hour.append(hourTemp);
+      const hourTime = document.createElement('h5');
+      hourTime.classList.add('hf-time');
+      hourTime.innerText = i + 'PM';
+      hour.append(hourTime);
+
+      hourlyForecast.append(hour);
+    }
+  }
+  const update = (data) => {
+    const hourlyData = data[1].hourly;
+    hourlyForecast.childNodes.forEach(hour => {
+      const hourChildNodes = hour.childNodes;
+      const hourIndex = hour.dataset.hourIndex;
+      const date = new Date(hourlyData[hourIndex].dt*1000);
+      const dayNight = getDayNight(data[0], hourlyData[hourIndex].dt);
+      hourChildNodes[0].innerText = getEmoji(hourlyData[hourIndex].weather[0], dayNight);
+      hourChildNodes[1].innerText = Math.round(hourlyData[hourIndex].temp) + '°';
+      hourChildNodes[2].innerText = toAmPm(date.getHours());
+    });
+  }
+
+  const toAmPm = (time) => {
+    let hour = time;
+    if (time == 0) {
+      hour = 12;
+    } else if (time > 12) {
+      hour = time - 12;
+    }
+
+    if (time < 12) {
+      return hour + 'AM';
+    } else {
+      return hour + 'PM';
+    }
+  }
+
+  const getEmoji = (weather, dayNight) => {
+    const emojis = {
+      'Thunderstorm': '⛈️',
+      'Drizzle': '🌧️',
+      'Rain': '🌧️',
+      'Snow': '🌨️',
+      'Mist': '🌫️',
+      'Smoke': '🌫️',
+      'Haze': '🌫️',
+      'Dust': '🌫️',
+      'Fog': '🌫️',
+      'Sand': '🌫️',
+      'Ash': '🌫️',
+      'Squall': '🌫️',
+      'Tornado': '🌪️',
+      'sun': '☀️',
+      'moon': '🌙',
+      'few clouds': '🌤️',
+      'scattered clouds': '⛅',
+      'broken clouds': '🌥️',
+      'overcast clouds': '☁️'
+    }
+    let weatherMain = weather.main;
+    if (weatherMain == 'Clouds') {
+      weatherMain = weather.description;
+    }
+    else if (weatherMain == 'Clear') {
+      if (dayNight == 'day') {
+        weatherMain = 'sun';
+      } else {
+        weatherMain = 'moon';
+      } 
+    }
+
+    return emojis[weatherMain];
+  }
+
+  const getDayNight = (current, date) => {
+    const sunrise = current.sys.sunrise;
+    const sunset = current.sys.sunset;
+    if (date - sunrise > 86400) {
+      date -= 86400;
+    }
+    if (date < sunrise || date > sunset) {
+      return 'night';
+    } else {
+      return 'day';
+    }
+  }
 
   return {
-
+    initialize,
+    update,
   };
 })();
 
@@ -137,6 +239,10 @@ const api = (() => {
 //   console.log(json);
 // }
 
-api.getDataFromInput('Spring').then(data => {
+
+display.initialize();
+
+api.getDataFromInput('Chicago').then(data => {
+  display.update(data);
   console.log(data);
 });
