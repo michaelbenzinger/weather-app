@@ -78,6 +78,7 @@ const input = (() => {
 
 const display = (() => {
   const hourlyForecast = document.querySelector('#hourly-forecast');
+  const dailyForecast = document.querySelector('#daily-section-container');
   const windArray = ['N','NE','E','SE','S','SW','W','NW','N'];
 
   const initialize = () => {
@@ -100,6 +101,35 @@ const display = (() => {
       hour.append(hourTime);
 
       hourlyForecast.append(hour);
+    }
+
+    // Initialize daily forecast
+    for (let i = 0; i < 7; i++) {
+      const day = document.createElement('div');
+      day.dataset.dayIndex = i + 1;
+      day.classList.add('df-day');
+      const dayName = document.createElement('h3');
+      dayName.classList.add('df-name');
+      dayName.innerText = 'Monday';
+      day.append(dayName);
+      const dayImg = document.createElement('div');
+      dayImg.classList.add('df-img');
+      dayImg.innerText = '☀️';
+      day.append(dayImg);
+      const dayPercent = document.createElement('h3');
+      dayPercent.classList.add('df-percent');
+      dayPercent.innerText = '25%';
+      day.append(dayPercent);
+      const dayHigh = document.createElement('h3');
+      dayHigh.classList.add('df-high');
+      dayHigh.innerText = '80°';
+      day.append(dayHigh);
+      const dayLow = document.createElement('h3');
+      dayLow.classList.add('df-low');
+      dayLow.innerText = '80°';
+      day.append(dayLow);
+
+      dailyForecast.append(day);
     }
   }
   const update = (data) => {
@@ -146,6 +176,21 @@ const display = (() => {
     if (Math.round(data[0].wind.speed) == 0) windDirection = '';
     document.querySelector('#info-wind').innerText =
       Math.round(data[0].wind.speed) + ' mph ' + windDirection;
+
+    // daily forecast
+    const dailyData = data[1].daily;
+    const dayArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    console.log(dailyForecast);
+    dailyForecast.childNodes.forEach(day => {
+      const dayChildNodes = day.childNodes;
+      const dayIndex = day.dataset.dayIndex;
+      const dayOfWeek = dayArray[new Date(dailyData[dayIndex].dt*1000).getDay()];
+      dayChildNodes[0].innerText = dayOfWeek;
+      dayChildNodes[1].innerText = getEmoji(dailyData[dayIndex].weather[0], 'day');
+      dayChildNodes[2].innerText = (dailyData[dayIndex].pop * 100) + '%';
+      dayChildNodes[3].innerText = Math.round(dailyData[dayIndex].temp.max) + '°';
+      dayChildNodes[4].innerText = Math.round(dailyData[dayIndex].temp.min) + '°';
+    });
   }
 
   const toAmPm = (timeInput, minutes) => {
@@ -265,7 +310,7 @@ const api = (() => {
 
 display.initialize();
 
-api.getDataFromInput('Monza').then(data => {
+api.getDataFromInput('Chicago').then(data => {
   display.update(data);
   console.log(data);
 });

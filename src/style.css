@@ -45,7 +45,7 @@ h5 {
 #today-section {
   width: 70vw;
   margin: 0 auto;
-  height: 50vw;
+  height: 40vw;
   /* padding: 10rem 0; */
   display: flex;
   flex-direction: row;
@@ -100,9 +100,47 @@ h5 {
 .info-label {
   font-size: 1rem;
 }
-/* #daily-section {
-  
-} */
+#daily-section {
+  width: 60vw;
+  margin: 0 auto;
+}
+#daily-section-container {
+  padding: 4.5rem 0;
+}
+.df-day {
+  font-size: 1.1rem;
+  padding: 0.7rem 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.df-name {
+  font-size: inherit;
+  /* font-weight: 700; */
+  width: 36%;
+}
+.df-img {
+  font-size: 1.6rem;
+  text-align: right;
+  width: 15%;
+}
+.df-percent {
+  font-size: inherit;
+  text-align: right;
+  width: 17%;
+}
+.df-high {
+  font-size: inherit;
+  text-align: right;
+  width: 18%;
+}
+.df-low {
+  font-size: inherit;
+  text-align: right;
+  width: 15%;
+  color: #777;
+}
 #search {
   margin: 2rem 0;
 }
