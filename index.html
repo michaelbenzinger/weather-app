@@ -29,16 +29,18 @@
   </section>
   <div id='today-section-container'>
     <section id='today-section'>
-      <div id='current-weather'>
-        <div id='cw-emoji'>
-          <p style='font-size: 4em;'>⛅</p>
+      <container id='current-weather-container'>
+        <h3 id='cw-location'></h3>
+        <div id='current-weather'>
+          <div id='cw-emoji'></div>
+          <div id='cw-info'>
+            <h1 id='cwi-temp'></h1>
+            <h3 id='cwi-condition'></h3>
+            <h4 id='cwi-feels-like'></h4>
+            <h5 id='cwi-as-of'></h5>
+          </div>
         </div>
-        <div id='cw-info'>
-          <h1 id='cwi-temp'>Temp</h1>
-          <h3 id='cwi-condition'>Condition</h3>
-          <h3 id='cwi-feels-like'>Feels Like</h3>
-        </div>
-      </div>
+      </container>
       <container id='hourly-forecast-container'>
         <div id='hourly-forecast'></div>
       </container>
@@ -47,19 +49,19 @@
   <section id='info-section'>
     <div id='info'>
       <div class='info-unit'>
-        <h4 class='info-data'>42%</h4>
+        <h4 class='info-data' id='info-humidity'>42%</h4>
         <h5 class='info-label'>Humidity</h5>
       </div>
       <div class='info-unit'>
-        <h4 class='info-data'>30.00 in</h4>
+        <h4 class='info-data' id='info-pressure'>30.00 in</h4>
         <h5 class='info-label'>Pressure</h5>
       </div>
       <div class='info-unit'>
-        <h4 class='info-data'>10 mi</h4>
+        <h4 class='info-data' id='info-visibility'>10 mi</h4>
         <h5 class='info-label'>Visibility</h5>
       </div>
       <div class='info-unit'>
-        <h4 class='info-data'>11 mph</h4>
+        <h4 class='info-data' id='info-wind'>11 mph</h4>
         <h5 class='info-label'>Wind</h5>
       </div>
     </div>
