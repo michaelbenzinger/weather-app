@@ -104,6 +104,10 @@ const display = (() => {
   }
   const update = (data) => {
 
+    const currentDate = new Date();
+    const timezoneOffset = currentDate.getTimezoneOffset()/60 + data[0].timezone/60/60;
+
+    // current weather data
     const dayNight = getDayNight(data[0], data[0].dt);
     let location = data[0].name + ', ';
     if (data[2] == null) location += data[0].sys.country;
@@ -117,26 +121,29 @@ const display = (() => {
       });
     document.querySelector('#cwi-feels-like').innerText = 'Feels like ' + 
       Math.round(data[0].main.feels_like) + '°';
-    document.querySelector('#cwi-as-of').innerText = 'As of ' + toAmPm(new Date(), true);
+    const asOfTime = new Date(currentDate.setHours(currentDate.getHours() + timezoneOffset));
+    document.querySelector('#cwi-as-of').innerText = 'As of ' + toAmPm(asOfTime, true);
 
+    // hourly forecast
     const hourlyData = data[1].hourly;
     hourlyForecast.childNodes.forEach(hour => {
       const hourChildNodes = hour.childNodes;
       const hourIndex = hour.dataset.hourIndex;
-      const date = new Date(hourlyData[hourIndex].dt*1000);
+      let date = new Date(hourlyData[hourIndex].dt*1000);
       const hourDayNight = getDayNight(data[0], hourlyData[hourIndex].dt);
       hourChildNodes[0].innerText = getEmoji(hourlyData[hourIndex].weather[0], hourDayNight);
       hourChildNodes[1].innerText = Math.round(hourlyData[hourIndex].temp) + '°';
-      hourChildNodes[2].innerText = toAmPm(date, false);
+      const hourTime = new Date(date.setHours(date.getHours() + timezoneOffset));
+      hourChildNodes[2].innerText = toAmPm(hourTime, false);
     });
 
+    // current weather info
     document.querySelector('#info-humidity').innerText = data[0].main.humidity + '%';
     document.querySelector('#info-pressure').innerText = data[0].main.pressure + ' hPa';
     document.querySelector('#info-visibility').innerText =
       (Math.round(data[0].visibility/1609.34)) + ' mi';
     let windDirection = windArray[Math.round((data[0].wind.deg)/45)];
     if (Math.round(data[0].wind.speed) == 0) windDirection = '';
-    console.log(Math.round((data[0].wind.deg)/45));
     document.querySelector('#info-wind').innerText =
       Math.round(data[0].wind.speed) + ' mph ' + windDirection;
   }
@@ -154,7 +161,7 @@ const display = (() => {
       convertedTime += ":" + timeInput.getMinutes();
     }
 
-    if (timeInput < 12) {
+    if (hours < 12) {
       return convertedTime + 'AM';
     } else {
       return convertedTime + 'PM';
@@ -204,7 +211,6 @@ const display = (() => {
     if (date - sunrise > 86400) {
       date -= 86400;
     }
-    // console.log("Time since sunrise: " + ((date - sunrise)/60/60));
     if (date < sunrise || date > sunset) {
       return 'night';
     } else {
@@ -257,25 +263,9 @@ const api = (() => {
   };
 })();
 
-// async function getWeather(text) {
-//   const temp = document.querySelector('#cwi-temp');
-//   const condition = document.querySelector('#cwi-condition');
-//   const feels_like = document.querySelector('#cwi-feels-like');
-//   temp.innerText = 'Loading Temp';
-//   condition.innerText = 'Loading Condition';
-//   feels_like.innerText = 'Loading Feels Like';
-//   const data = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${text}&units=imperial&appid=${token}`);
-//   const json = await data.json();
-//   temp.innerText = Math.round(json.main.temp) + '°F';
-//   condition.innerText = json.weather[0].main;
-//   feels_like.innerText = 'Feels like ' + Math.round(json.main.feels_like) + '°F';
-//   console.log(json);
-// }
-
-
 display.initialize();
 
-api.getDataFromInput('Chicago, IL').then(data => {
+api.getDataFromInput('Monza').then(data => {
   display.update(data);
   console.log(data);
 });
