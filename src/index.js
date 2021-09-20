@@ -78,6 +78,7 @@ const input = (() => {
 
 const display = (() => {
   const hourlyForecast = document.querySelector('#hourly-forecast');
+  const windArray = ['N','NE','E','SE','S','SW','W','NW','N'];
 
   const initialize = () => {
     // Initialize hourly forecast
@@ -102,30 +103,61 @@ const display = (() => {
     }
   }
   const update = (data) => {
+
+    const dayNight = getDayNight(data[0], data[0].dt);
+    let location = data[0].name + ', ';
+    if (data[2] == null) location += data[0].sys.country;
+    else location += data[2];
+    document.querySelector('#cw-location').innerText = location;
+    document.querySelector('#cw-emoji').innerText = getEmoji(data[0].weather[0], dayNight);
+    document.querySelector('#cwi-temp').innerText = Math.round(data[0].main.temp) + '°';
+    document.querySelector('#cwi-condition').innerText = data[0].weather[0].
+      description.replace(/(\w)(\w*)/g, function(g0,g1,g2) {
+        return g1.toUpperCase() + g2.toLowerCase();
+      });
+    document.querySelector('#cwi-feels-like').innerText = 'Feels like ' + 
+      Math.round(data[0].main.feels_like) + '°';
+    document.querySelector('#cwi-as-of').innerText = 'As of ' + toAmPm(new Date(), true);
+
     const hourlyData = data[1].hourly;
     hourlyForecast.childNodes.forEach(hour => {
       const hourChildNodes = hour.childNodes;
       const hourIndex = hour.dataset.hourIndex;
       const date = new Date(hourlyData[hourIndex].dt*1000);
-      const dayNight = getDayNight(data[0], hourlyData[hourIndex].dt);
-      hourChildNodes[0].innerText = getEmoji(hourlyData[hourIndex].weather[0], dayNight);
+      const hourDayNight = getDayNight(data[0], hourlyData[hourIndex].dt);
+      hourChildNodes[0].innerText = getEmoji(hourlyData[hourIndex].weather[0], hourDayNight);
       hourChildNodes[1].innerText = Math.round(hourlyData[hourIndex].temp) + '°';
-      hourChildNodes[2].innerText = toAmPm(date.getHours());
+      hourChildNodes[2].innerText = toAmPm(date, false);
     });
+
+    document.querySelector('#info-humidity').innerText = data[0].main.humidity + '%';
+    document.querySelector('#info-pressure').innerText = data[0].main.pressure + ' hPa';
+    document.querySelector('#info-visibility').innerText =
+      (Math.round(data[0].visibility/1609.34)) + ' mi';
+    let windDirection = windArray[Math.round((data[0].wind.deg)/45)];
+    if (Math.round(data[0].wind.speed) == 0) windDirection = '';
+    console.log(Math.round((data[0].wind.deg)/45));
+    document.querySelector('#info-wind').innerText =
+      Math.round(data[0].wind.speed) + ' mph ' + windDirection;
   }
 
-  const toAmPm = (time) => {
-    let hour = time;
-    if (time == 0) {
-      hour = 12;
-    } else if (time > 12) {
-      hour = time - 12;
+  const toAmPm = (timeInput, minutes) => {
+    let hours = timeInput.getHours();
+    let convertedTime = hours;
+    if (hours == 0) {
+      convertedTime = 12;
+    } else if (hours > 12) {
+      convertedTime = hours - 12;
     }
 
-    if (time < 12) {
-      return hour + 'AM';
+    if (minutes) {
+      convertedTime += ":" + timeInput.getMinutes();
+    }
+
+    if (timeInput < 12) {
+      return convertedTime + 'AM';
     } else {
-      return hour + 'PM';
+      return convertedTime + 'PM';
     }
   }
 
@@ -172,6 +204,7 @@ const display = (() => {
     if (date - sunrise > 86400) {
       date -= 86400;
     }
+    // console.log("Time since sunrise: " + ((date - sunrise)/60/60));
     if (date < sunrise || date > sunset) {
       return 'night';
     } else {
@@ -242,7 +275,7 @@ const api = (() => {
 
 display.initialize();
 
-api.getDataFromInput('Chicago').then(data => {
+api.getDataFromInput('Chicago, IL').then(data => {
   display.update(data);
   console.log(data);
 });
