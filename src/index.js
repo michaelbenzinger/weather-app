@@ -144,7 +144,6 @@ const display = (() => {
   };
 
   const update = (data) => {
-
     const currentDate = new Date();
     const timezoneOffset = currentDate.getTimezoneOffset()/60 + data[0].timezone/60/60;
 
@@ -210,6 +209,8 @@ const display = (() => {
       dayChildNodes[3].innerText = Math.round(dailyData[dayIndex].temp.max) + '°';
       dayChildNodes[4].innerText = Math.round(dailyData[dayIndex].temp.min) + '°';
     });
+
+    display.removeLoadAnimation();
   };
 
   const error = (message) => {
@@ -221,6 +222,22 @@ const display = (() => {
       errorTooltip.remove();
     }, 3000);
   };
+
+  const makeLoadAnimation = () => {
+    const loading = document.createElement('div');
+    loading.classList.add('loading');
+    const loadingSpinner = document.createElement('div');
+    loadingSpinner.classList.add('loading-spinner');
+    loadingSpinner.classList.add('lds-ripple');
+    loadingSpinner.appendChild(document.createElement('div'));
+    loadingSpinner.appendChild(document.createElement('div'));
+    loading.appendChild(loadingSpinner);
+    document.querySelector('body').appendChild(loading);
+  }
+
+  const removeLoadAnimation = () => {
+    document.querySelector('.loading').remove();
+  }
 
   const toAmPm = (timeInput, minutes) => {
     let hours = timeInput.getHours();
@@ -306,11 +323,14 @@ const display = (() => {
     initialize,
     update,
     error,
+    makeLoadAnimation,
+    removeLoadAnimation,
   };
 })();
 
 const api = (() => {
   const getDataFromInput = async (text) => {
+    display.makeLoadAnimation();
     try {
       const converted = input.convertInput(text);
 
@@ -331,8 +351,8 @@ const api = (() => {
       return [currentWeatherJson, oneCallJson, state];
     }
     catch (error) {
-      console.log(error);
       display.error(error);
+      display.removeLoadAnimation();
     }
   }
 
@@ -381,6 +401,7 @@ const color = (() => {
 })();
 
 display.initialize();
+// display.loadAnimation();
 
 api.getDataFromInput('Chicago, IL').then(data => {
   display.update(data);
