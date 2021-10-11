@@ -49,7 +49,14 @@ section {
 }
 #search {
   position: relative;
-  margin: 2rem 0;
+  margin: 1.6rem 0;
+  padding: 0 1.1rem;
+  height: 2.2rem;
+  width: 80%;
+  max-width: 20rem;
+  border-radius: 40px;
+  border: 1px solid #AAA;
+  font-size: 0.9rem;
 }
 .error-tooltip {
   font-size: 0.8rem;
@@ -96,7 +103,7 @@ section {
   justify-content: flex-start;
 }
 #hourly-forecast-container {
-  max-width: 63%;
+  max-width: 58%;
   overflow-x: scroll;
 }
 #hourly-forecast-container::-webkit-scrollbar {
@@ -281,15 +288,17 @@ section {
 @media (max-width: 1140px) {
   #today-section {
     height: auto;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     margin: 0 auto;
-    padding-top: clamp(4rem, 20vh, 8rem);
+    padding-top: clamp(4rem, 15vw, 8rem);
     padding-bottom: clamp(4rem, 15vw, 8rem);
+  }
+  #hourly-forecast-container {
+    max-width: 100%;
   }
   #current-weather {
     justify-content: flex-start;
-  }
-  #hourly-forecast {
-    overflow: hidden;
   }
 }

@@ -249,7 +249,9 @@ const display = (() => {
     }
 
     if (minutes) {
-      convertedTime += ":" + timeInput.getMinutes();
+      let minutes = timeInput.getMinutes();
+      if (minutes < 10) minutes = '0' + minutes;
+      convertedTime += ":" + minutes;
     }
 
     if (hours < 12) {
