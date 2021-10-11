@@ -41,10 +41,33 @@ section {
   background-color: var(--light-gray);
 }
 #search-section {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: var(--light-gray);
+}
+#search {
+  position: relative;
+  margin: 2rem 0;
+}
+.error-tooltip {
+  font-size: 0.8rem;
+  position: absolute;
+  bottom: -1rem;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 0.4rem;
+  animation: disappear 3s;
+}
+@keyframes disappear {
+  0%   { opacity: 100%; }
+  90%  { opacity: 100%; }
+  100% {
+    opacity: 0%;
+    display: hidden;
+  }
 }
 #today-section-container {
   background-image: linear-gradient(110deg, rgb(19, 92, 226), rgb(0, 171, 201));
@@ -154,9 +177,6 @@ section {
   text-align: right;
   width: 15%;
   color: #777;
-}
-#search {
-  margin: 2rem 0;
 }
 #cw-location {
   margin-bottom: 0.7rem;

@@ -141,7 +141,8 @@ const display = (() => {
         });
       }
     });
-  }
+  };
+
   const update = (data) => {
 
     const currentDate = new Date();
@@ -201,12 +202,25 @@ const display = (() => {
       dayChildNodes[1].innerText = getEmoji(dailyData[dayIndex].weather[0], 'day');
       dayChildNodes[2].innerText = (Math.round((dailyData[dayIndex].pop) * 100)) + '%';
       if (dailyData[dayIndex].pop == 0) {
+        console.log(dailyData[dayIndex].pop);
         dayChildNodes[2].style.color = '#777';
+      } else {
+        dayChildNodes[2].style.color = 'inherit';
       }
       dayChildNodes[3].innerText = Math.round(dailyData[dayIndex].temp.max) + '°';
       dayChildNodes[4].innerText = Math.round(dailyData[dayIndex].temp.min) + '°';
     });
-  }
+  };
+
+  const error = (message) => {
+    const errorTooltip = document.createElement('div');
+    errorTooltip.classList.add('error-tooltip');
+    errorTooltip.innerText = message;
+    document.querySelector('#search').parentElement.appendChild(errorTooltip);
+    setTimeout(() => {
+      errorTooltip.remove();
+    }, 3000);
+  };
 
   const toAmPm = (timeInput, minutes) => {
     let hours = timeInput.getHours();
@@ -226,7 +240,7 @@ const display = (() => {
     } else {
       return convertedTime + 'PM';
     }
-  }
+  };
 
   const getEmoji = (weather, dayNight) => {
     const emojis = {
@@ -291,6 +305,7 @@ const display = (() => {
   return {
     initialize,
     update,
+    error,
   };
 })();
 
@@ -316,7 +331,8 @@ const api = (() => {
       return [currentWeatherJson, oneCallJson, state];
     }
     catch (error) {
-      console.error(error);
+      console.log(error);
+      display.error(error);
     }
   }
 
