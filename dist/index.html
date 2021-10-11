@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 
-  <title>Title</title>
+  <title>Weather App</title>
 
   <!-- <meta name="description" content="Page description">
   <meta property="og:title" content="Unique page title - My Site">
@@ -24,9 +24,11 @@
 </head>
 
 <body>
-  <section id='search-section'>
-    <input id='search'></input>
-  </section>
+  <div id='search-section-container'>
+    <section id='search-section'>
+      <input id='search'></input>
+    </section>
+  </div>
   <div id='today-section-container'>
     <section id='today-section'>
       <container id='current-weather-container'>
@@ -46,29 +48,31 @@
       </container>
     </section>
   </div>
-  <section id='info-section'>
-    <div id='info'>
-      <div class='info-unit'>
-        <h4 class='info-data' id='info-humidity'>42%</h4>
-        <h5 class='info-label'>Humidity</h5>
+  <div id='info-section-container'>
+    <section id='info-section'>
+      <div id='info'>
+        <div class='info-unit'>
+          <h4 class='info-data' id='info-humidity'>42%</h4>
+          <h5 class='info-label'>Humidity</h5>
+        </div>
+        <div class='info-unit'>
+          <h4 class='info-data' id='info-pressure'>30.00 in</h4>
+          <h5 class='info-label'>Pressure</h5>
+        </div>
+        <div class='info-unit'>
+          <h4 class='info-data' id='info-visibility'>10 mi</h4>
+          <h5 class='info-label'>Visibility</h5>
+        </div>
+        <div class='info-unit'>
+          <h4 class='info-data' id='info-wind'>11 mph</h4>
+          <h5 class='info-label'>Wind</h5>
+        </div>
       </div>
-      <div class='info-unit'>
-        <h4 class='info-data' id='info-pressure'>30.00 in</h4>
-        <h5 class='info-label'>Pressure</h5>
-      </div>
-      <div class='info-unit'>
-        <h4 class='info-data' id='info-visibility'>10 mi</h4>
-        <h5 class='info-label'>Visibility</h5>
-      </div>
-      <div class='info-unit'>
-        <h4 class='info-data' id='info-wind'>11 mph</h4>
-        <h5 class='info-label'>Wind</h5>
-      </div>
-    </div>
-  </section>
-  <section id='daily-section'>
-    <div id='daily-section-container'></div>
-  </section>
+    </section>
+  </div>
+  <div id='daily-section-container'>
+    <section id='daily-section'></section>
+  </div>
   <script type='text/javascript' src='../codes.js'></script>
   <script type='text/javascript' src='../config.js'></script>
   <script src="./bundle.js"></script>

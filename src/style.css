@@ -1,3 +1,6 @@
+:root {
+  --light-gray: #EEE;
+}
 html {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -29,24 +32,28 @@ h4 {
 h5 {
   font-size: 1.0rem;
 }
-/* section {
-  width: 100vw;
-} */
+section {
+  width: 60vw;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+#search-section-container {
+  background-color: var(--light-gray);
+}
 #search-section {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #EEE;
+  background-color: var(--light-gray);
 }
 #today-section-container {
   background-image: linear-gradient(110deg, rgb(19, 92, 226), rgb(0, 171, 201));
+  /* background-image: linear-gradient(110deg, rgb(81, 154, 197), rgb(182, 117, 219)); */
   color: white; 
 }
 #today-section {
-  width: 70vw;
   margin: 0 auto;
-  height: 40vw;
-  /* padding: 10rem 0; */
+  height: clamp(30vh, 45vw, 45vh);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -78,11 +85,14 @@ h5 {
 #hourly-forecast-container::-webkit-scrollbar-thumb {
   background-color: #333;
 }
+#info-section-container {
+  background-color: var(--light-gray);
+}
 #info-section {
-  background-color: #EEE;
+
 }
 #info {
-  width: 50vw;
+  /* width: 50vw; */
   padding: 4rem 0;
   margin: 0 auto;
   display: flex;
@@ -100,11 +110,12 @@ h5 {
 .info-label {
   font-size: 1rem;
 }
-#daily-section {
-  width: 60vw;
-  margin: 0 auto;
-}
 #daily-section-container {
+
+}
+#daily-section {
+  /* width: 60vw; */
+  margin: 0 auto;
   padding: 4.5rem 0;
 }
 .df-day {
@@ -179,4 +190,19 @@ h5 {
 .hf-time {
   font-size: 0.85rem;
   letter-spacing: 0.03rem;
+}
+@media (max-width: 1140px) {
+  #today-section {
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding-top: clamp(4rem, 20vh, 8rem);
+    padding-bottom: clamp(4rem, 15vw, 8rem);
+  }
+  #current-weather {
+    justify-content: flex-start;
+  }
+  #hourly-forecast {
+    overflow: hidden;
+  }
 }

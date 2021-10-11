@@ -53,7 +53,8 @@ const input = (() => {
 
   // Converts the user text to an array of its comma-separated phrases
   const getTextArray = (text) => {
-    return text.match(/(?<=(^|,|, *))\w[\w\s-]+/g);
+    const array = text.match(/(?<=(^|,|, *))\w[\w\s-]+/g);
+    return array;
   };
 
   // If text is a key or value in object, returns pair as an array
@@ -78,7 +79,7 @@ const input = (() => {
 
 const display = (() => {
   const hourlyForecast = document.querySelector('#hourly-forecast');
-  const dailyForecast = document.querySelector('#daily-section-container');
+  const dailyForecast = document.querySelector('#daily-section');
   const windArray = ['N','NE','E','SE','S','SW','W','NW','N'];
 
   const initialize = () => {
@@ -131,6 +132,15 @@ const display = (() => {
 
       dailyForecast.append(day);
     }
+
+    // Add Enter Key listener to search box
+    document.querySelector('#search').addEventListener('keydown', e => {
+      if (e.key == 'Enter') {
+        api.getDataFromInput(e.target.value).then(data => {
+          display.update(data);
+        });
+      }
+    });
   }
   const update = (data) => {
 
@@ -138,12 +148,12 @@ const display = (() => {
     const timezoneOffset = currentDate.getTimezoneOffset()/60 + data[0].timezone/60/60;
 
     // current weather data
-    const dayNight = getDayNight(data[0], data[0].dt);
+    const dayNight = getDayNight(data[0], data[0].dt)
     let location = data[0].name + ', ';
     if (data[2] == null) location += data[0].sys.country;
     else location += data[2];
     document.querySelector('#cw-location').innerText = location;
-    document.querySelector('#cw-emoji').innerText = getEmoji(data[0].weather[0], dayNight);
+    document.querySelector('#cw-emoji').innerText = getEmoji(data[0].weather[0], dayNight.dayNight);
     document.querySelector('#cwi-temp').innerText = Math.round(data[0].main.temp) + '°';
     document.querySelector('#cwi-condition').innerText = data[0].weather[0].
       description.replace(/(\w)(\w*)/g, function(g0,g1,g2) {
@@ -153,6 +163,9 @@ const display = (() => {
       Math.round(data[0].main.feels_like) + '°';
     const asOfTime = new Date(currentDate.setHours(currentDate.getHours() + timezoneOffset));
     document.querySelector('#cwi-as-of').innerText = 'As of ' + toAmPm(asOfTime, true);
+    document.querySelector('#today-section-container').style = 
+      `background-image: linear-gradient(${color.getColor(data[0].weather[0], dayNight)});`
+    
 
     // hourly forecast
     const hourlyData = data[1].hourly;
@@ -160,7 +173,7 @@ const display = (() => {
       const hourChildNodes = hour.childNodes;
       const hourIndex = hour.dataset.hourIndex;
       let date = new Date(hourlyData[hourIndex].dt*1000);
-      const hourDayNight = getDayNight(data[0], hourlyData[hourIndex].dt);
+      const hourDayNight = getDayNight(data[0], hourlyData[hourIndex].dt).dayNight;
       hourChildNodes[0].innerText = getEmoji(hourlyData[hourIndex].weather[0], hourDayNight);
       hourChildNodes[1].innerText = Math.round(hourlyData[hourIndex].temp) + '°';
       const hourTime = new Date(date.setHours(date.getHours() + timezoneOffset));
@@ -180,14 +193,16 @@ const display = (() => {
     // daily forecast
     const dailyData = data[1].daily;
     const dayArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    console.log(dailyForecast);
     dailyForecast.childNodes.forEach(day => {
       const dayChildNodes = day.childNodes;
       const dayIndex = day.dataset.dayIndex;
       const dayOfWeek = dayArray[new Date(dailyData[dayIndex].dt*1000).getDay()];
       dayChildNodes[0].innerText = dayOfWeek;
       dayChildNodes[1].innerText = getEmoji(dailyData[dayIndex].weather[0], 'day');
-      dayChildNodes[2].innerText = (dailyData[dayIndex].pop * 100) + '%';
+      dayChildNodes[2].innerText = (Math.round((dailyData[dayIndex].pop) * 100)) + '%';
+      if (dailyData[dayIndex].pop == 0) {
+        dayChildNodes[2].style.color = '#777';
+      }
       dayChildNodes[3].innerText = Math.round(dailyData[dayIndex].temp.max) + '°';
       dayChildNodes[4].innerText = Math.round(dailyData[dayIndex].temp.min) + '°';
     });
@@ -256,11 +271,21 @@ const display = (() => {
     if (date - sunrise > 86400) {
       date -= 86400;
     }
-    if (date < sunrise || date > sunset) {
-      return 'night';
-    } else {
-      return 'day';
+    let dnData = {
+      dayNight: null,
+      sunsetSunrise: null,
+    };
+    if (Math.abs(date-sunrise) <= 1800) {
+      dnData.sunsetSunrise = 'sunrise';
+    } else if (Math.abs(date-sunset) <= 1800) {
+      dnData.sunsetSunrise = 'sunset';
     }
+    if (date < sunrise || date > sunset) {
+      dnData.dayNight = 'night';
+    } else {
+      dnData.dayNight = 'day';
+    }
+    return dnData;
   }
 
   return {
@@ -308,9 +333,40 @@ const api = (() => {
   };
 })();
 
+const color = (() => {
+  const colors = {
+    day:   '110deg, rgb(19, 92, 226), rgb(0, 171, 201)',
+    cloudy:  '110deg, rgb(71, 102, 160), rgb(106, 124, 145)',
+    stormy:  '110deg, rgb(71, 115, 141), rgb(62, 76, 121)',
+    night:   '110deg, rgb(29, 52, 97), rgb(30, 61, 126)',
+    sunset:  '110deg, rgb(156, 37, 192), rgb(204, 103, 57)',
+    sunrise: '110deg, rgb(81, 154, 197), rgb(182, 117, 219)',
+  }
+  const getColor = (weather, dayNight) => {
+    const cloudyConditions = 
+      ['Drizzle', 'Snow', 'Mist', 'Smoke', 'Haze', 'Dust', 'Fog', 'Sand', 'Ash',
+      'Squall', 'Tornado', 'Clouds'];
+    const stormyConditions = ['Thunderstorm', 'Rain'];
+    
+    if (dayNight.sunsetSunrise) {
+      return colors[dayNight.sunsetSunrise];
+    } else if (stormyConditions.includes(weather.main)) {
+      return colors.stormy;
+    } else if (cloudyConditions.includes(weather.main)) {
+      return colors.cloudy;
+    } else {
+      return colors[dayNight.dayNight];
+    }
+  }
+  return {
+    colors,
+    getColor,
+  }
+})();
+
 display.initialize();
 
-api.getDataFromInput('Chicago').then(data => {
+api.getDataFromInput('Chicago, IL').then(data => {
   display.update(data);
   console.log(data);
 });
