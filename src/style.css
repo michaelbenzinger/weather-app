@@ -300,23 +300,11 @@ section {
   opacity: 80%;
 }
 
-@media (max-width: 800px) {
-  html {
-    font-size: 14px;
-  }
-  #info-section {
-    padding: 1.6rem 0;
-  }
-  #info {
-    grid-template-columns: 1fr 1fr;
-  }
-  #info-unit {
-    padding: 0.4rem 0;
-  }
-}
-
 /* Responsive sizing for the today view */
 @media (max-width: 1140px) {
+  section {
+    width: 70vw;
+  }
   #today-section {
     height: auto;
     display: flex;
@@ -331,5 +319,29 @@ section {
   }
   #current-weather {
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 800px) {
+  section {
+    width: 80vw;
+  }
+  html {
+    font-size: 14px;
+  }
+  #info-section {
+    padding: 1.6rem 0;
+  }
+  #info {
+    grid-template-columns: 1fr 1fr;
+  }
+  #info-unit {
+    padding: 0.4rem 0;
+  }
+}
+
+@media (max-width: 500px) {
+  section {
+    width: 90vw;
   }
 }
