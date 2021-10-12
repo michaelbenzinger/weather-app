@@ -369,7 +369,7 @@ const api = (() => {
     try {
       const converted = input.convertInput(text);
 
-      const currentWeather = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${converted}&units=${units.getUnit().toLowerCase()}&appid=${token}`);
+      const currentWeather = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${converted}&units=${units.getUnit().toLowerCase()}&appid=${token}`);
       const currentWeatherJson = await currentWeather.json();
   
       if (currentWeatherJson.cod == '404') {
@@ -378,7 +378,7 @@ const api = (() => {
 
       const lat = currentWeatherJson.coord.lat;
       const lon = currentWeatherJson.coord.lon;
-      const oneCall = await fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely&units=${units.getUnit().toLowerCase()}&appid=${token}`);
+      const oneCall = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely&units=${units.getUnit().toLowerCase()}&appid=${token}`);
       const oneCallJson = await oneCall.json();
   
       const state = getStateFromCityId(currentWeatherJson.id);
