@@ -161,6 +161,8 @@ const display = (() => {
         display.update(data);
       });
     });
+
+    document.querySelector('#search').placeholder = 'Enter a location';
   };
 
   const update = (data) => {
