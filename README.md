@@ -2,6 +2,8 @@
 
 The goal of this project is to make use of the OpenWeather API to fetch current and forecasted weather data and display it to the user in a useful way. The project is built with HTML, CSS, and Javascript.
 
+⛅ [Live Preview](https://michaelbenzinger.github.io/weather-app/)
+
 ## Challenges Presented
 
 There were a couple of key challenges that I set out to overcome while building this app.
