@@ -58,6 +58,20 @@ section {
   border: 1px solid #AAA;
   font-size: 0.9rem;
 }
+#unit {
+  text-align: center;
+  width: 4rem;
+  margin: 0 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 40px;
+  background-color: white;
+  border: 1px solid #AAA;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+#unit:hover {
+  background-color: var(--light-gray);
+}
 .error-tooltip {
   font-size: 0.8rem;
   position: absolute;
@@ -118,9 +132,6 @@ section {
 #info-section-container {
   background-color: var(--light-gray);
 }
-#info-section {
-
-}
 #info {
   /* width: 50vw; */
   height: clamp(8rem, 5rem + 10vw, 11rem);
@@ -143,13 +154,10 @@ section {
 .info-label {
   font-size: 1rem;
 }
-#daily-section-container {
-
-}
 #daily-section {
   /* width: 60vw; */
   margin: 0 auto;
-  padding: 4.5rem 0;
+  padding: 4.5rem 0 7rem 0;
 }
 .df-day {
   font-size: 1.1rem;
@@ -193,9 +201,6 @@ section {
 }
 #cwi-feels-like {
   margin-bottom: 0.4rem;
-}
-#cwi-as-of {
-
 }
 #cw-emoji {
   margin-right: 1.5rem;
@@ -272,7 +277,32 @@ section {
   }
 }
 
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  width: 100%;
+  background-color: var(--footer-background, dodgerBlue);
+  color: var(--main-background, white);
+}
+#my-name {
+  font-weight: 700;
+  color: var(--main-background, white);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+#my-name:hover {
+  opacity: 80%;
+}
+
 @media (max-width: 800px) {
+  html {
+    font-size: 14px;
+  }
   #info-section {
     padding: 1.6rem 0;
   }

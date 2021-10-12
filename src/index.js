@@ -6,6 +6,17 @@ const token = config.MY_API_TOKEN;
 
 const input = (() => {
 
+  let location;
+
+  const getLocation = () => {
+    return location;
+  }
+
+  const setLocation = (text) => {
+    location = text;
+    return location;
+  }
+
   const convertInput = (text) => {
     const textArray = getTextArray(text);
 
@@ -74,6 +85,8 @@ const input = (() => {
   return {
     convertInput,
     getPairFromInput,
+    getLocation,
+    setLocation,
   };
 })();
 
@@ -141,6 +154,13 @@ const display = (() => {
         });
       }
     });
+
+    document.querySelector('#unit').addEventListener('click', e => {
+      e.target.innerText = units.toggleUnit();
+      api.getDataFromInput(input.getLocation()).then(data => {
+        display.update(data);
+      });
+    });
   };
 
   const update = (data) => {
@@ -154,7 +174,11 @@ const display = (() => {
     else location += data[2];
     document.querySelector('#cw-location').innerText = location;
     document.querySelector('#cw-emoji').innerText = getEmoji(data[0].weather[0], dayNight.dayNight);
-    document.querySelector('#cwi-temp').innerText = Math.round(data[0].main.temp) + '°';
+    if (units.getUnit() == 'Imperial') {
+      document.querySelector('#cwi-temp').innerText = Math.round(data[0].main.temp) + '°F';
+    } else {
+      document.querySelector('#cwi-temp').innerText = Math.round(data[0].main.temp) + '°C';
+    }
     document.querySelector('#cwi-condition').innerText = data[0].weather[0].
       description.replace(/(\w)(\w*)/g, function(g0,g1,g2) {
         return g1.toUpperCase() + g2.toLowerCase();
@@ -164,7 +188,9 @@ const display = (() => {
     const asOfTime = new Date(currentDate.setHours(currentDate.getHours() + timezoneOffset));
     document.querySelector('#cwi-as-of').innerText = 'As of ' + toAmPm(asOfTime, true);
     document.querySelector('#today-section-container').style = 
-      `background-image: linear-gradient(${color.getColor(data[0].weather[0], dayNight)});`
+      `background-image: linear-gradient(${color.getColor(data[0].weather[0], dayNight)});`;
+    document.querySelector('.app-footer').style = 
+    `background-image: linear-gradient(${color.getColor(data[0].weather[0], dayNight)});`;
     
 
     // hourly forecast
@@ -187,8 +213,13 @@ const display = (() => {
       (Math.round(data[0].visibility/1609.34)) + ' mi';
     let windDirection = windArray[Math.round((data[0].wind.deg)/45)];
     if (Math.round(data[0].wind.speed) == 0) windDirection = '';
-    document.querySelector('#info-wind').innerText =
-      Math.round(data[0].wind.speed) + ' mph ' + windDirection;
+    if (units.getUnit() == 'Imperial') {
+      document.querySelector('#info-wind').innerText =
+        Math.round(data[0].wind.speed) + ' mph ' + windDirection;
+    } else {
+      document.querySelector('#info-wind').innerText =
+      Math.round(data[0].wind.speed) + ' m/s ' + windDirection;
+    }
 
     // daily forecast
     const dailyData = data[1].daily;
@@ -336,7 +367,7 @@ const api = (() => {
     try {
       const converted = input.convertInput(text);
 
-      const currentWeather = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${converted}&units=imperial&appid=${token}`);
+      const currentWeather = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${converted}&units=${units.getUnit().toLowerCase()}&appid=${token}`);
       const currentWeatherJson = await currentWeather.json();
   
       if (currentWeatherJson.cod == '404') {
@@ -345,10 +376,12 @@ const api = (() => {
 
       const lat = currentWeatherJson.coord.lat;
       const lon = currentWeatherJson.coord.lon;
-      const oneCall = await fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely&units=imperial&appid=${token}`);
+      const oneCall = await fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely&units=${units.getUnit().toLowerCase()}&appid=${token}`);
       const oneCallJson = await oneCall.json();
   
       const state = getStateFromCityId(currentWeatherJson.id);
+
+      input.setLocation(converted);
   
       return [currentWeatherJson, oneCallJson, state];
     }
@@ -373,7 +406,7 @@ const api = (() => {
 
 const color = (() => {
   const colors = {
-    day:   '110deg, rgb(19, 92, 226), rgb(0, 171, 201)',
+    day:     '110deg, rgb(19, 92, 226), rgb(0, 171, 201)',
     cloudy:  '110deg, rgb(71, 102, 160), rgb(106, 124, 145)',
     stormy:  '110deg, rgb(71, 115, 141), rgb(62, 76, 121)',
     night:   '110deg, rgb(29, 52, 97), rgb(30, 61, 126)',
@@ -402,8 +435,31 @@ const color = (() => {
   }
 })();
 
+const units = (() => {
+  let unit = 'Imperial';
+
+  const toggleUnit = () => {
+    if (unit == 'Metric') {
+      unit = 'Imperial';
+      console.log('setting unit to imp');
+    } else {
+      unit = 'Metric';
+      console.log('setting unit to met');
+    }
+    return unit;
+  }
+
+  const getUnit = () => {
+    return unit;
+  }
+
+  return {
+    getUnit,
+    toggleUnit,
+  }
+})();
+
 display.initialize();
-// display.loadAnimation();
 
 api.getDataFromInput('Chicago, IL').then(data => {
   display.update(data);
