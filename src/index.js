@@ -65,7 +65,7 @@ const input = (() => {
 
   // Converts the user text to an array of its comma-separated phrases
   const getTextArray = (text) => {
-    const array = text.match(/(?<=(^|,|, *))\w[\w\s-]+/g);
+    const array = text.match(/\w[\w\s-]+/g);
     return array;
   };
 
