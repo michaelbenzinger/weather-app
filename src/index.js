@@ -1,7 +1,7 @@
 import './meyerreset.css';
 import './style.css';
 
-const cityList = require('../new.city.list.min.json');
+const cityList = require('./new.city.list.min.json');
 const token = 'c4c6fbae056faebbd305323ecc27fe10';
 
 const input = (() => {
